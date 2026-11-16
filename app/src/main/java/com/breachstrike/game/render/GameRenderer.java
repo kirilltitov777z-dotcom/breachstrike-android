@@ -147,7 +147,9 @@ public final class GameRenderer {
         float fov = gs.scoped ? gs.currentDef().scopeFov : gs.save.fov();
         if (fov < 30) fov = 30;
         if (fov > 110) fov = 110;
-        float[] p = Mat4.perspective(gs.scoped ? fov : Math.max(55f, fov), aspect, 0.05f, 220f);
+        int q = gs.save.quality();
+        float far = q <= 0 ? 130f : q == 1 ? 180f : 220f;
+        float[] p = Mat4.perspective(gs.scoped ? fov : Math.max(55f, fov), aspect, 0.05f, far);
         System.arraycopy(p, 0, proj, 0, 16);
         float[] v = Mat4.lookAt(eye[0], eye[1], eye[2],
                 eye[0] + dir[0], eye[1] + dir[1], eye[2] + dir[2],
@@ -161,8 +163,8 @@ public final class GameRenderer {
         GLES20.glUniformMatrix4fv(uProj, 1, false, proj, 0);
         GLES20.glUniformMatrix4fv(uView, 1, false, view, 0);
         GLES20.glUniform3f(uFog, hexR(map.skyColor), hexG(map.skyColor), hexB(map.skyColor));
-        GLES20.glUniform1f(uFogNear, 35f);
-        GLES20.glUniform1f(uFogFar, 130f);
+        GLES20.glUniform1f(uFogNear, q <= 0 ? 22f : 35f);
+        GLES20.glUniform1f(uFogFar, q <= 0 ? 90f : q == 1 ? 110f : 130f);
         GLES20.glUniform3f(uCam, eye[0], eye[1], eye[2]);
         GLES20.glUniform1f(uAlpha, 1f);
         GLES20.glUniform1i(uTex, 0);

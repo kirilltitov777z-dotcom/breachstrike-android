@@ -35,6 +35,7 @@ public final class GameView extends GLSurfaceView implements GLSurfaceView.Rende
         this.listener = l;
         assets = new Assets(c);
         assets.setVolume(save.volume());
+        assets.setQuality(save.quality());
         state = new GameState(cfg, assets, save, new GameState.Listener() {
             @Override
             public void onMatchEnd(GameState gs) {

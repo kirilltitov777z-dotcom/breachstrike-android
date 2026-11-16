@@ -22,6 +22,7 @@ public final class Assets {
     private final HashMap<String, Integer> sounds = new HashMap<>();
     private final HashMap<Integer, Integer> soundIds = new HashMap<>();
     private float volume = 0.8f;
+    private int quality = 2;
     private int fallbackTex = -1;
 
     public Assets(Context ctx) {
@@ -58,6 +59,8 @@ public final class Assets {
 
     public void setVolume(float v) { volume = v; }
 
+    public void setQuality(int q) { quality = q; }
+
     public void play(String name, float vol) {
         Integer id = sounds.get(name);
         if (id == null) return;
@@ -82,14 +85,17 @@ public final class Assets {
             // asset pack. Phones do not need that many pixels on screen: decode
             // at half size to keep GL memory around 35 MB instead of 140 MB.
             boolean small = name.equals("mat_flash") || name.equals("mat_blade");
-            opts.inSampleSize = small ? 4 : 2;
+            boolean low = quality <= 0;
+            opts.inSampleSize = low ? 4 : 2;
+            if (small) opts.inSampleSize *= 2;
             opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
             bmp = BitmapFactory.decodeStream(am.open("tex/" + name + ".png"), null, opts);
             // GLES2 only allows REPEAT + mipmaps on power-of-two textures.
-            // Skins decode to 768x768 (NPOT): scale them to 512x512.
+            // Skins decode to 768x768 (NPOT): scale them to a POT size.
+            int target = low ? 256 : 512;
             if (bmp != null && name.startsWith("skin_")
-                    && (bmp.getWidth() != 512 || bmp.getHeight() != 512)) {
-                Bitmap scaled = Bitmap.createScaledBitmap(bmp, 512, 512, true);
+                    && (bmp.getWidth() != target || bmp.getHeight() != target)) {
+                Bitmap scaled = Bitmap.createScaledBitmap(bmp, target, target, true);
                 if (scaled != bmp) {
                     bmp.recycle();
                     bmp = scaled;
