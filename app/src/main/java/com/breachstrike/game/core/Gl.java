@@ -26,6 +26,11 @@ public final class Gl {
         int p = GLES20.glCreateProgram();
         GLES20.glAttachShader(p, v);
         GLES20.glAttachShader(p, f);
+        // The renderer always feeds aPos/aNormal/aUv from slots 0/1/2; bind them
+        // explicitly instead of trusting the driver's default assignment.
+        GLES20.glBindAttribLocation(p, 0, "aPos");
+        GLES20.glBindAttribLocation(p, 1, "aNormal");
+        GLES20.glBindAttribLocation(p, 2, "aUv");
         GLES20.glLinkProgram(p);
         int[] ok = new int[1];
         GLES20.glGetProgramiv(p, GLES20.GL_LINK_STATUS, ok, 0);
