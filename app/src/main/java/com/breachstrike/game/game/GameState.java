@@ -74,8 +74,8 @@ public final class GameState {
     public int lanKills;
     private float lanSendTimer;
 
-    public final ArrayList<String> feed = new ArrayList<>();
-    private final ArrayList<Float> feedAge = new ArrayList<>();
+    public final java.util.concurrent.CopyOnWriteArrayList<String> feed = new java.util.concurrent.CopyOnWriteArrayList<>();
+    private final java.util.concurrent.CopyOnWriteArrayList<Float> feedAge = new java.util.concurrent.CopyOnWriteArrayList<>();
     public volatile float fps;
 
     private final String[] names = {"Viper", "Ghost", "Nova", "Rex", "Kilo", "Frost", "Hawk", "Zen", "Wolf", "Blaze"};

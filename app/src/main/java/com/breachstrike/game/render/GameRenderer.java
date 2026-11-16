@@ -57,6 +57,8 @@ public final class GameRenderer {
     private final float[] identity = Mat4.identity();
     private float time;
     private final float[] camPos = new float[3];
+    private String vmWeapon = "";
+    private String vmSkin = "";
 
     public GameRenderer(Assets assets, GameState gs) {
         this.assets = assets;
@@ -257,7 +259,11 @@ public final class GameRenderer {
         GLES20.glUniform1f(uFogNear, 100f);
         GLES20.glUniform1f(uFogFar, 200f);
 
-        String pattern = gs.save.equippedSkin(d.id);
+        if (!d.id.equals(vmWeapon)) {
+            vmWeapon = d.id;
+            vmSkin = gs.save.equippedSkin(d.id);
+        }
+        String pattern = vmSkin;
         String tex = pattern.length() > 0 ? Skins.skinTexture(Skins.patternOf(pattern)) : "mat_gunmetal";
         float[] tint;
         if (pattern.length() > 0) {
