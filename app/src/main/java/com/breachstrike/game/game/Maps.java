@@ -22,7 +22,7 @@ public final class Maps {
         m.floorMat = "concrete";
 
         // shell
-        m.add(0, -0.5f, 0, 62, 1, 54, "concrete");
+        m.add(0, -1.0f, 0, 62, 1, 54, "concrete");
         m.add(0, 0, -26, 62, 7, 1, "concrete2");
         m.add(0, 0, 26, 62, 7, 1, "concrete2");
         m.add(-30, 0, 0, 1, 7, 52, "concrete2");
@@ -92,7 +92,7 @@ public final class Maps {
         m.skyColor = 0xFF1E2A3A;
         m.floorMat = "tile";
 
-        m.add(0, -0.5f, 0, 58, 1, 58, "tile");
+        m.add(0, -1.0f, 0, 58, 1, 58, "tile");
         m.add(0, 0, -28, 58, 8, 1, "rust");
         m.add(0, 0, 28, 58, 8, 1, "rust");
         m.add(-28, 0, 0, 1, 8, 56, "rust");
