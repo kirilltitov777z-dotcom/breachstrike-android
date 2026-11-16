@@ -143,15 +143,20 @@ public final class Lan {
     }
 
     public void shot(float ox, float oy, float oz, float[] d) {
+        shot(ox, oy, oz, d, 32f);
+    }
+
+    public void shot(float ox, float oy, float oz, float[] d, float dmg) {
         if (closed) return;
         if (host) {
-            resolveShot(myId, ox, oy, oz, d);
+            resolveShot(myId, ox, oy, oz, d, dmg);
         } else {
             JSONObject o = new JSONObject();
             try {
                 o.put("t", "shot");
                 o.put("ox", ox); o.put("oy", oy); o.put("oz", oz);
                 o.put("dx", d[0]); o.put("dy", d[1]); o.put("dz", d[2]);
+                o.put("dmg", dmg);
             } catch (Exception ignored) {}
             send(o);
         }
@@ -219,7 +224,9 @@ public final class Lan {
         return o;
     }
 
-    private void resolveShot(int shooterId, float ox, float oy, float oz, float[] d) {
+    private void resolveShot(int shooterId, float ox, float oy, float oz, float[] d, float dmg) {
+        if (dmg < 1f) dmg = 1f;
+        if (dmg > 260f) dmg = 260f;
         int victimId = -1;
         float best = 100f;
         boolean head = false;
@@ -248,7 +255,8 @@ public final class Lan {
         JSONObject killer = players.get(shooterId);
         if (victim == null || killer == null) return;
         try {
-            int hp = victim.optInt("hp", 100) - (head ? 85 : 32);
+            int dealt = Math.max(1, Math.round(dmg * (head ? 2.2f : 1f)));
+            int hp = victim.optInt("hp", 100) - dealt;
             victim.put("hp", Math.max(0, hp));
             if (hp <= 0) {
                 victim.put("alive", false);
@@ -258,7 +266,7 @@ public final class Lan {
             JSONObject ev = new JSONObject();
             ev.put("t", "hit");
             ev.put("victim", victimId);
-            ev.put("dmg", head ? 85 : 32);
+            ev.put("dmg", dealt);
             ev.put("head", head);
             ev.put("by", killer.optString("n", "?"));
             ev.put("dead", hp <= 0);
@@ -376,7 +384,8 @@ public final class Lan {
                         float[] d = {(float) o.optDouble("dx", 0), (float) o.optDouble("dy", 0), (float) o.optDouble("dz", -1)};
                         float len = (float) Math.sqrt(d[0] * d[0] + d[1] * d[1] + d[2] * d[2]);
                         if (len > 0.01f) { d[0] /= len; d[1] /= len; d[2] /= len; }
-                        resolveShot(id, (float) o.optDouble("ox", 0), (float) o.optDouble("oy", 0), (float) o.optDouble("oz", 0), d);
+                        resolveShot(id, (float) o.optDouble("ox", 0), (float) o.optDouble("oy", 0),
+                                (float) o.optDouble("oz", 0), d, (float) o.optDouble("dmg", 32));
                     }
                 }
             } catch (Throwable ignored) {

@@ -536,7 +536,7 @@ public final class GameState {
             hitMarker = 0.25f;
             assets.play("hitmarker", 0.7f);
         }
-        if (lan != null) lan.shot(o[0], o[1], o[2], base);
+        if (lan != null) lan.shot(o[0], o[1], o[2], base, d.damage * d.pellets);
         // recoil
         pitch += d.recoil * 0.16f;
         if (pitch > 89) pitch = 89;
@@ -561,6 +561,7 @@ public final class GameState {
             hitMarker = 0.25f;
             assets.play("knife_hit", 0.9f);
         }
+        if (lan != null) lan.shot(o[0], o[1], o[2], base, 65f);
     }
 
     private float[] jitter(float[] d, float spread) {
