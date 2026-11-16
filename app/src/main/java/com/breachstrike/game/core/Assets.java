@@ -85,6 +85,16 @@ public final class Assets {
             opts.inSampleSize = small ? 4 : 2;
             opts.inPreferredConfig = Bitmap.Config.ARGB_8888;
             bmp = BitmapFactory.decodeStream(am.open("tex/" + name + ".png"), null, opts);
+            // GLES2 only allows REPEAT + mipmaps on power-of-two textures.
+            // Skins decode to 768x768 (NPOT): scale them to 512x512.
+            if (bmp != null && name.startsWith("skin_")
+                    && (bmp.getWidth() != 512 || bmp.getHeight() != 512)) {
+                Bitmap scaled = Bitmap.createScaledBitmap(bmp, 512, 512, true);
+                if (scaled != bmp) {
+                    bmp.recycle();
+                    bmp = scaled;
+                }
+            }
         } catch (Exception e) {
             Log.w("BreachAssets", "texture " + name + ": " + e.getMessage());
         }
